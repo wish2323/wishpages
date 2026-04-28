@@ -1,7 +1,7 @@
 name = "wishpages"
 compatibility_date = "2025-01-01"
+main = "src/worker.ts"
 
 [assets]
 directory = "./dist"
-html_handling = "auto-trailing-slash"
-not_found_handling = "404-page"
+binding = "ASSETS"
