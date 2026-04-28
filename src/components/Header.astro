@@ -1,0 +1,41 @@
+---
+import { SITE_TITLE } from '../consts';
+---
+
+<header>
+	<nav>
+		<a href="/" class="logo">{SITE_TITLE}</a>
+		<a href="/about">About</a>
+	</nav>
+</header>
+
+<style>
+	header {
+		margin: 0;
+		padding: 0 1.5em;
+		background: white;
+		border-bottom: 1px solid #eee;
+	}
+	nav {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		max-width: 860px;
+		margin: 0 auto;
+		height: 56px;
+	}
+	nav a {
+		text-decoration: none;
+		color: #222;
+		font-size: 0.95rem;
+	}
+	nav a:hover {
+		color: #555;
+	}
+	.logo {
+		font-family: Georgia, 'Times New Roman', serif;
+		font-size: 1.1rem;
+		font-weight: bold;
+		letter-spacing: -0.01em;
+	}
+</style>

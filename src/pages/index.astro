@@ -1,0 +1,135 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import Header from '../components/Header.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
+const allPages = (await getCollection('pages')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<section class="intro">
+				<h1>wishpages</h1>
+				<p class="tagline">A growing collection of small things by Wish.</p>
+				<p class="desc">
+					This is a bookshelf of experiments, tools, and ideas — each page is a small thing made
+					with care. New entries appear as part of a 90-day build challenge.
+				</p>
+			</section>
+
+			<section class="card-grid">
+				{
+					allPages.map((page) => (
+						<a href={`/pages/${page.id}/`} class="card">
+							<h3 class="card-title">{page.data.title}</h3>
+							<p class="card-desc">{page.data.description}</p>
+							<p class="card-date">
+								<FormattedDate date={page.data.pubDate} />
+							</p>
+							{page.data.tags && (
+								<ul class="card-tags">
+									{page.data.tags.map((tag: string) => (
+										<li>{tag}</li>
+									))}
+								</ul>
+							)}
+						</a>
+					))
+				}
+			</section>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.intro {
+		margin-bottom: 3rem;
+	}
+	.intro h1 {
+		font-size: 2.5rem;
+		margin-bottom: 0.4rem;
+	}
+	.tagline {
+		font-size: 1.1rem;
+		color: #555;
+		margin: 0 0 1rem 0;
+	}
+	.desc {
+		color: #666;
+		max-width: 560px;
+		line-height: 1.7;
+		margin: 0;
+	}
+
+	.card-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 1.25rem;
+	}
+	@media (min-width: 540px) {
+		.card-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+	@media (min-width: 860px) {
+		.card-grid {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+
+	.card {
+		display: block;
+		padding: 1.25rem;
+		border: 1px solid #e5e5e5;
+		border-radius: 6px;
+		text-decoration: none;
+		color: inherit;
+		transition: background-color 0.15s ease;
+	}
+	.card:hover {
+		background-color: #f9f9f9;
+	}
+	.card-title {
+		font-size: 1.05rem;
+		margin: 0 0 0.4rem 0;
+		color: #111;
+	}
+	.card-desc {
+		font-size: 0.9rem;
+		color: #555;
+		margin: 0 0 0.75rem 0;
+		line-height: 1.5;
+	}
+	.card-date {
+		font-size: 0.8rem;
+		color: #999;
+		margin: 0 0 0.5rem 0;
+	}
+	.card-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+	.card-tags li {
+		font-size: 0.75rem;
+		color: #777;
+		background: #f0f0f0;
+		padding: 0.15rem 0.5rem;
+		border-radius: 3px;
+	}
+</style>
