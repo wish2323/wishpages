@@ -1,0 +1,171 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../../components/BaseHead.astro';
+import Footer from '../../../components/Footer.astro';
+import HomeLink from '../../../components/HomeLink.astro';
+
+export async function getStaticPaths() {
+	const entries = await getCollection('page1');
+	const projects = [...new Set(entries.flatMap((e) => e.data.projects))];
+	return projects.map((project) => ({
+		params: { project },
+		props: {
+			project,
+			entries: entries
+				.filter((e) => e.data.projects.includes(project))
+				.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()),
+		},
+	}));
+}
+
+const { project, entries } = Astro.props;
+
+const formatDate = (date: Date) => date.toLocaleDateString('en-CA');
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`${project} · wishpages`} description={`Entries for ${project}.`} />
+	</head>
+	<body>
+		<header>
+			<nav>
+				<a href="/page1/" class="back">← 90 days making things</a>
+				<HomeLink />
+			</nav>
+		</header>
+
+		<main>
+			<div class="page-header">
+				<h1>{project}</h1>
+				<span class="count">{entries.length} {entries.length === 1 ? 'entry' : 'entries'}</span>
+			</div>
+
+			<ul class="entry-list">
+				{
+					entries.map((entry) => (
+						<li class="entry">
+							<a href={`/page1/${entry.id}/`} class="entry-link">
+								<span class="entry-date">{formatDate(entry.data.date)}</span>
+								<span class="entry-projects">{entry.data.projects.join(' · ')}</span>
+								<p class="entry-desc">{entry.data.description}</p>
+								<div class="entry-tags">
+									{(entry.data.tags ?? []).map((tag) => (
+										<span class="tag">#{tag}</span>
+									))}
+								</div>
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</main>
+
+		<Footer />
+	</body>
+</html>
+
+<style>
+	body {
+		font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+		background: #fff;
+		color: #111;
+		margin: 0;
+	}
+	header {
+		border-bottom: 1px solid #eee;
+		padding: 0 1.5rem;
+	}
+	nav {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		max-width: 680px;
+		margin: 0 auto;
+		height: 52px;
+	}
+	nav a {
+		text-decoration: none;
+		color: #555;
+		font-size: 0.875rem;
+	}
+	nav a:hover { color: #111; }
+
+	main {
+		max-width: 680px;
+		margin: 0 auto;
+		padding: 3rem 1.5rem;
+	}
+
+	.page-header {
+		display: flex;
+		align-items: baseline;
+		gap: 0.75rem;
+		margin-bottom: 2.5rem;
+	}
+	h1 {
+		font-size: 1.25rem;
+		font-weight: 700;
+		margin: 0;
+	}
+	.count {
+		font-size: 0.85rem;
+		color: #aaa;
+	}
+
+	.entry-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+	.entry {
+		border-top: 1px solid #f0f0f0;
+	}
+	.entry:last-child {
+		border-bottom: 1px solid #f0f0f0;
+	}
+	.entry-link {
+		display: block;
+		padding: 1.25rem 0;
+		text-decoration: none;
+		color: inherit;
+		transition: background 0.1s;
+	}
+	.entry-link:hover {
+		background: #fafafa;
+		padding-left: 0.5rem;
+		margin-left: -0.5rem;
+		padding-right: 0.5rem;
+		margin-right: -0.5rem;
+		border-radius: 4px;
+	}
+	.entry-date {
+		font-size: 0.8rem;
+		color: #aaa;
+		display: block;
+		margin-bottom: 0.25rem;
+	}
+	.entry-projects {
+		font-size: 0.975rem;
+		font-weight: 600;
+		color: #111;
+		display: block;
+		margin-bottom: 0.3rem;
+	}
+	.entry-desc {
+		font-size: 0.875rem;
+		color: #666;
+		margin: 0 0 0.6rem 0;
+		line-height: 1.5;
+	}
+	.entry-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem;
+	}
+	.tag {
+		font-size: 0.75rem;
+		color: #bbb;
+	}
+</style>

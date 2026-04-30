@@ -1,0 +1,168 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import HomeLink from '../../components/HomeLink.astro';
+
+export async function getStaticPaths() {
+	const entries = await getCollection('page1');
+	return entries.map((entry) => ({
+		params: { slug: entry.id },
+		props: { entry },
+	}));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const formatDate = (date: Date) =>
+	date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title={`${formatDate(entry.data.date)} · wishpages`}
+			description={entry.data.description}
+		/>
+	</head>
+	<body>
+		<header>
+			<nav>
+				<a href="/page1/" class="back">← 90 days making things</a>
+				<HomeLink />
+			</nav>
+		</header>
+
+		<main>
+			<div class="entry-header">
+				<time class="date">{formatDate(entry.data.date)}</time>
+				<div class="tags">
+					{(entry.data.tags ?? []).map((tag) => (
+						<a href={`/page1/tags/${tag}/`} class="tag">#{tag}</a>
+					))}
+				</div>
+			</div>
+
+			<article class="prose">
+				<Content />
+			</article>
+		</main>
+
+		<Footer />
+	</body>
+</html>
+
+<style>
+	body {
+		font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+		background: #fff;
+		color: #111;
+		margin: 0;
+	}
+
+	header {
+		border-bottom: 1px solid #eee;
+		padding: 0 1.5rem;
+	}
+	nav {
+		max-width: 680px;
+		margin: 0 auto;
+		height: 52px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+	nav a {
+		text-decoration: none;
+		color: #555;
+		font-size: 0.875rem;
+	}
+	nav a:hover {
+		color: #111;
+	}
+
+	main {
+		max-width: 680px;
+		margin: 0 auto;
+		padding: 3rem 1.5rem;
+	}
+
+	.entry-header {
+		margin-bottom: 2.5rem;
+		padding-bottom: 1.5rem;
+		border-bottom: 1px solid #f0f0f0;
+	}
+	.date {
+		display: block;
+		font-size: 0.875rem;
+		color: #aaa;
+		margin-bottom: 0.75rem;
+	}
+	.tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+	}
+	.tag {
+		font-size: 0.775rem;
+		color: #888;
+		text-decoration: none;
+		border: 1px solid #e5e5e5;
+		padding: 0.2rem 0.55rem;
+		border-radius: 99px;
+		transition: all 0.15s;
+	}
+	.tag:hover {
+		color: #111;
+		border-color: #111;
+	}
+
+	.prose {
+		font-size: 0.975rem;
+		line-height: 1.8;
+		color: #222;
+	}
+	.prose :global(h2) {
+		font-size: 1.1rem;
+		font-weight: 700;
+		margin: 2.5rem 0 0.75rem 0;
+		color: #111;
+		font-family: Georgia, serif;
+	}
+	.prose :global(h2:first-child) {
+		margin-top: 0;
+	}
+	.prose :global(p) {
+		margin: 0 0 1rem 0;
+		color: #444;
+	}
+	.prose :global(ul) {
+		margin: 0 0 1rem 0;
+		padding-left: 1.25rem;
+		color: #444;
+	}
+	.prose :global(li) {
+		margin-bottom: 0.3rem;
+	}
+	.prose :global(hr) {
+		border: none;
+		border-top: 1px solid #f0f0f0;
+		margin: 2.5rem 0;
+	}
+	.prose :global(blockquote) {
+		border-left: 3px solid #e5e5e5;
+		margin: 1.5rem 0;
+		padding: 0.25rem 0 0.25rem 1rem;
+		color: #888;
+		font-size: 0.9rem;
+	}
+	.prose :global(code) {
+		font-size: 0.875em;
+		background: #f5f5f5;
+		padding: 0.1em 0.35em;
+		border-radius: 3px;
+		color: #333;
+	}
+</style>

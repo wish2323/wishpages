@@ -1,0 +1,149 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import HomeLink from '../../components/HomeLink.astro';
+
+const projects = await getCollection('page2');
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title="projects · wishpages" description="A collection of things I've built." />
+	</head>
+	<body>
+		<header>
+			<nav>
+				<a href="/" class="back">← wishpages</a>
+				<HomeLink />
+			</nav>
+		</header>
+
+		<main>
+			<section class="intro">
+				<h1>projects</h1>
+				<p class="desc">A collection of things I've built.</p>
+			</section>
+
+			<ul class="project-list">
+				{
+					projects.map((project) => (
+						<li class="project-item">
+							<a href={`/page2/${project.id}/`} class="project-link">
+								<span class="project-title">{project.data.title}</span>
+								<p class="project-desc">{project.data.description}</p>
+								<div class="project-tags">
+									{(project.data.tags ?? []).map((tag) => (
+										<span class="tag">#{tag}</span>
+									))}
+								</div>
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</main>
+
+		<Footer />
+	</body>
+</html>
+
+<style>
+	body {
+		font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+		background: #fff;
+		color: #111;
+		margin: 0;
+	}
+	header {
+		border-bottom: 1px solid #eee;
+		padding: 0 1.5rem;
+	}
+	nav {
+		max-width: 680px;
+		margin: 0 auto;
+		height: 52px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+	nav a {
+		text-decoration: none;
+		color: #555;
+		font-size: 0.875rem;
+	}
+	nav a:hover { color: #111; }
+
+	main {
+		max-width: 680px;
+		margin: 0 auto;
+		padding: 3rem 1.5rem;
+	}
+
+	.intro {
+		margin-bottom: 2.5rem;
+	}
+	.intro h1 {
+		font-size: 1.5rem;
+		font-weight: 700;
+		margin: 0 0 0.4rem 0;
+	}
+	.desc {
+		color: #777;
+		font-size: 0.95rem;
+		margin: 0;
+	}
+
+	.project-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+	.project-item {
+		border-top: 1px solid #f0f0f0;
+	}
+	.project-item:last-child {
+		border-bottom: 1px solid #f0f0f0;
+	}
+
+	.project-link {
+		display: block;
+		padding: 1.5rem 0;
+		text-decoration: none;
+		color: inherit;
+		transition: background 0.1s;
+	}
+	.project-link:hover {
+		background: #fafafa;
+		padding-left: 0.5rem;
+		margin-left: -0.5rem;
+		padding-right: 0.5rem;
+		margin-right: -0.5rem;
+		border-radius: 4px;
+	}
+
+	.project-title {
+		display: block;
+		font-size: 1rem;
+		font-weight: 600;
+		color: #111;
+		margin-bottom: 0.35rem;
+	}
+	.project-desc {
+		font-size: 0.875rem;
+		color: #666;
+		margin: 0 0 0.6rem 0;
+		line-height: 1.5;
+	}
+	.project-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem;
+	}
+	.tag {
+		font-size: 0.75rem;
+		color: #bbb;
+	}
+
+</style>

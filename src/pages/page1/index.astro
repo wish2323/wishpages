@@ -1,0 +1,212 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import HomeLink from '../../components/HomeLink.astro';
+
+const entries = (await getCollection('page1')).sort(
+	(a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+
+const allProjects = [...new Set(entries.flatMap((e) => e.data.projects))].sort();
+
+const formatDate = (date: Date) =>
+	date.toLocaleDateString('en-CA');
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title="90 days making things · wishpages" description="A record of consistently making new things." />
+	</head>
+	<body>
+		<header>
+			<nav>
+				<a href="/" class="back">← wishpages</a>
+				<div class="nav-right">
+					<a href="/page1/tags/" class="tags-link">Tags</a>
+					<HomeLink />
+				</div>
+			</nav>
+		</header>
+
+		<main>
+			<section class="intro">
+				<h1>90 days making things</h1>
+				<p class="desc">A record of consistently making new things.</p>
+			</section>
+
+			<div class="project-filter">
+				<a href="/page1/" class="project active-check">All</a>
+				{allProjects.map((project) => (
+					<a href={`/page1/projects/${project}/`} class="project">{project}</a>
+				))}
+			</div>
+
+			<ul class="entry-list">
+				{
+					entries.map((entry) => (
+						<li class="entry">
+							<a href={`/page1/${entry.id}/`} class="entry-link">
+								<span class="entry-date">{formatDate(entry.data.date)}</span>
+								<span class="entry-projects">{entry.data.projects.join(' · ')}</span>
+								<p class="entry-desc">{entry.data.description}</p>
+								<div class="entry-tags">
+									{(entry.data.tags ?? []).map((tag) => (
+										<span class="tag">#{tag}</span>
+									))}
+								</div>
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</main>
+
+		<Footer />
+	</body>
+</html>
+
+<style>
+	body {
+		font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+		background: #fff;
+		color: #111;
+		margin: 0;
+	}
+
+	header {
+		border-bottom: 1px solid #eee;
+		padding: 0 1.5rem;
+	}
+	nav {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		max-width: 680px;
+		margin: 0 auto;
+		height: 52px;
+	}
+	nav a {
+		text-decoration: none;
+		color: #555;
+		font-size: 0.9rem;
+	}
+	nav a:hover {
+		color: #111;
+	}
+	.nav-right {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+	}
+	.back {
+		font-size: 0.875rem;
+	}
+	.tags-link {
+		font-size: 0.875rem;
+	}
+
+	main {
+		max-width: 680px;
+		margin: 0 auto;
+		padding: 3rem 1.5rem;
+	}
+
+	.intro {
+		margin-bottom: 2.5rem;
+	}
+	.intro h1 {
+		font-size: 1.5rem;
+		font-weight: 700;
+		margin: 0 0 0.4rem 0;
+		font-family: Georgia, serif;
+	}
+	.desc {
+		color: #777;
+		font-size: 0.95rem;
+		margin: 0;
+	}
+
+	.project-filter {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin-bottom: 2.5rem;
+	}
+	.project-filter .project {
+		font-size: 0.8rem;
+		color: #888;
+		text-decoration: none;
+		border: 1px solid #e5e5e5;
+		padding: 0.2rem 0.6rem;
+		border-radius: 99px;
+		transition: all 0.15s;
+	}
+	.project-filter .project:hover,
+	.project-filter .project.active-check {
+		color: #111;
+		border-color: #111;
+	}
+
+	.entry-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+	}
+
+	.entry {
+		border-top: 1px solid #f0f0f0;
+	}
+	.entry:last-child {
+		border-bottom: 1px solid #f0f0f0;
+	}
+
+	.entry-link {
+		display: block;
+		padding: 1.25rem 0;
+		text-decoration: none;
+		color: inherit;
+		transition: background 0.1s;
+	}
+	.entry-link:hover {
+		background: #fafafa;
+		padding-left: 0.5rem;
+		margin-left: -0.5rem;
+		padding-right: 0.5rem;
+		margin-right: -0.5rem;
+		border-radius: 4px;
+	}
+
+	.entry-date {
+		font-size: 0.8rem;
+		color: #aaa;
+		display: block;
+		margin-bottom: 0.25rem;
+	}
+	.entry-projects {
+		font-size: 0.975rem;
+		font-weight: 600;
+		color: #111;
+		display: block;
+		margin-bottom: 0.3rem;
+	}
+	.entry-desc {
+		font-size: 0.875rem;
+		color: #666;
+		margin: 0 0 0.6rem 0;
+		line-height: 1.5;
+	}
+	.entry-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem;
+	}
+	.entry-tags .tag {
+		font-size: 0.75rem;
+		color: #999;
+	}
+</style>

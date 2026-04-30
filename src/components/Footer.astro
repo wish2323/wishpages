@@ -4,6 +4,7 @@ const today = new Date();
 
 <footer>
 	<p>© {today.getFullYear()} · <a href="https://github.com/wish2323" target="_blank">GitHub</a></p>
+	<p class="contact">contact · <a href="mailto:obagwish@gmail.com">obagwish@gmail.com</a></p>
 </footer>
 
 <style>
@@ -14,11 +15,27 @@ const today = new Date();
 		font-size: 0.875rem;
 		border-top: 1px solid #eee;
 	}
+	footer p {
+		margin: 0 0 0.35rem 0;
+	}
+	footer p:last-child {
+		margin: 0;
+	}
 	footer a {
 		color: #888;
 		text-decoration: underline;
 	}
 	footer a:hover {
 		color: #444;
+	}
+	.contact {
+		color: #bbb;
+		font-size: 0.8rem;
+	}
+	.contact a {
+		color: #bbb;
+	}
+	.contact a:hover {
+		color: #888;
 	}
 </style>

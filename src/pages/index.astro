@@ -1,135 +1,177 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
-import FormattedDate from '../components/FormattedDate.astro';
-import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 
-const allPages = (await getCollection('pages')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+const pages = [
+	{
+		slug: 'page1',
+		title: '90 days making things',
+		description: 'A record of consistently making new things. Side projects, extensions, tools.',
+		href: '/page1/',
+	},
+	{
+		slug: 'page2',
+		title: 'projects',
+		description: 'A collection of things I\'ve built.',
+		href: '/page2/',
+	},
+];
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="ko">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 	</head>
 	<body>
-		<Header />
+		<header>
+			<nav>
+				<span class="logo">wishpages</span>
+				<a href="/page1/tags/">Tags</a>
+			</nav>
+		</header>
+
 		<main>
 			<section class="intro">
 				<h1>wishpages</h1>
-				<p class="tagline">A growing collection of small things by Wish.</p>
-				<p class="desc">
-					This is a bookshelf of experiments, tools, and ideas — each page is a small thing made
-					with care. New entries appear as part of a 90-day build challenge.
-				</p>
+				<p class="tagline">A space for things I build and the stories behind them.</p>
+				<p class="tagline">Tools, extensions, side projects — updated as they happen, not when they're perfect.</p>
 			</section>
 
-			<section class="card-grid">
+			<ul class="page-list">
 				{
-					allPages.map((page) => (
-						<a href={`/pages/${page.id}/`} class="card">
-							<h3 class="card-title">{page.data.title}</h3>
-							<p class="card-desc">{page.data.description}</p>
-							<p class="card-date">
-								<FormattedDate date={page.data.pubDate} />
-							</p>
-							{page.data.tags && (
-								<ul class="card-tags">
-									{page.data.tags.map((tag: string) => (
-										<li>{tag}</li>
-									))}
-								</ul>
-							)}
-						</a>
+					pages.map((page) => (
+						<li>
+							<a href={page.href} class="page-card">
+								<div class="card-left">
+									<span class="card-title">{page.title}</span>
+									<p class="card-desc">{page.description}</p>
+								</div>
+								<span class="card-arrow">→</span>
+							</a>
+						</li>
 					))
 				}
-			</section>
+			</ul>
 		</main>
+
 		<Footer />
 	</body>
 </html>
 
 <style>
+	body {
+		font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+		background: #fff;
+		color: #111;
+		margin: 0;
+	}
+
+	header {
+		border-bottom: 1px solid #eee;
+		padding: 0 1.5rem;
+	}
+	nav {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		max-width: 680px;
+		margin: 0 auto;
+		height: 52px;
+	}
+	.logo {
+		font-family: Georgia, serif;
+		font-size: 1rem;
+		font-weight: bold;
+		letter-spacing: -0.01em;
+		color: #111;
+	}
+	nav a {
+		text-decoration: none;
+		color: #555;
+		font-size: 0.875rem;
+	}
+	nav a:hover { color: #111; }
+
+	main {
+		max-width: 680px;
+		margin: 0 auto;
+		padding: 3rem 1.5rem;
+	}
+
 	.intro {
 		margin-bottom: 3rem;
 	}
 	.intro h1 {
-		font-size: 2.5rem;
-		margin-bottom: 0.4rem;
-	}
-	.tagline {
-		font-size: 1.1rem;
-		color: #555;
-		margin: 0 0 1rem 0;
-	}
-	.desc {
-		color: #666;
-		max-width: 560px;
-		line-height: 1.7;
-		margin: 0;
-	}
-
-	.card-grid {
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: 1.25rem;
-	}
-	@media (min-width: 540px) {
-		.card-grid {
-			grid-template-columns: repeat(2, 1fr);
-		}
-	}
-	@media (min-width: 860px) {
-		.card-grid {
-			grid-template-columns: repeat(3, 1fr);
-		}
-	}
-
-	.card {
-		display: block;
-		padding: 1.25rem;
-		border: 1px solid #e5e5e5;
-		border-radius: 6px;
-		text-decoration: none;
-		color: inherit;
-		transition: background-color 0.15s ease;
-	}
-	.card:hover {
-		background-color: #f9f9f9;
-	}
-	.card-title {
-		font-size: 1.05rem;
+		font-size: 1.75rem;
+		font-family: Georgia, serif;
 		margin: 0 0 0.4rem 0;
 		color: #111;
 	}
-	.card-desc {
+	.tagline {
+		color: #888;
 		font-size: 0.9rem;
-		color: #555;
-		margin: 0 0 0.75rem 0;
-		line-height: 1.5;
+		margin: 0 0 0.2rem 0;
+		line-height: 1.6;
 	}
-	.card-date {
-		font-size: 0.8rem;
-		color: #999;
-		margin: 0 0 0.5rem 0;
+	.tagline:last-of-type {
+		margin-bottom: 0;
 	}
-	.card-tags {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.4rem;
+
+	.page-list {
 		list-style: none;
 		margin: 0;
 		padding: 0;
 	}
-	.card-tags li {
-		font-size: 0.75rem;
+	.page-list li {
+		border-top: 1px solid #f0f0f0;
+	}
+	.page-list li:last-child {
+		border-bottom: 1px solid #f0f0f0;
+	}
+
+	.page-card {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 1.5rem 0;
+		text-decoration: none;
+		color: inherit;
+		gap: 1rem;
+		transition: background 0.1s;
+	}
+	.page-card:hover {
+		background: #fafafa;
+		padding-left: 0.5rem;
+		margin-left: -0.5rem;
+		padding-right: 0.5rem;
+		margin-right: -0.5rem;
+		border-radius: 4px;
+	}
+	.card-left {
+		flex: 1;
+	}
+	.card-title {
+		display: block;
+		font-size: 1rem;
+		font-weight: 600;
+		color: #111;
+		margin-bottom: 0.35rem;
+	}
+	.card-desc {
+		font-size: 0.875rem;
 		color: #777;
-		background: #f0f0f0;
-		padding: 0.15rem 0.5rem;
-		border-radius: 3px;
+		margin: 0;
+		line-height: 1.5;
+	}
+	.card-arrow {
+		font-size: 1rem;
+		color: #ccc;
+		flex-shrink: 0;
+		transition: color 0.15s;
+	}
+	.page-card:hover .card-arrow {
+		color: #555;
 	}
 </style>

@@ -1,0 +1,116 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../../components/BaseHead.astro';
+import Footer from '../../../components/Footer.astro';
+import HomeLink from '../../../components/HomeLink.astro';
+
+const entries = await getCollection('page1');
+const tagMap = new Map<string, number>();
+entries.forEach((e) => {
+	(e.data.tags ?? []).forEach((tag) => {
+		tagMap.set(tag, (tagMap.get(tag) ?? 0) + 1);
+	});
+});
+const tags = [...tagMap.entries()].sort((a, b) => b[1] - a[1]);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title="Tags · wishpages" description="Browse entries by tag." />
+	</head>
+	<body>
+		<header>
+			<nav>
+				<a href="/page1/" class="back">← 90 days making things</a>
+				<HomeLink />
+			</nav>
+		</header>
+
+		<main>
+			<h1>Tags</h1>
+			<ul class="tag-list">
+				{
+					tags.map(([tag, count]) => (
+						<li>
+							<a href={`/page1/tags/${tag}/`} class="tag-item">
+								<span class="tag-name">#{tag}</span>
+								<span class="tag-count">{count}</span>
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</main>
+
+		<Footer />
+	</body>
+</html>
+
+<style>
+	body {
+		font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+		background: #fff;
+		color: #111;
+		margin: 0;
+	}
+	header {
+		border-bottom: 1px solid #eee;
+		padding: 0 1.5rem;
+	}
+	nav {
+		max-width: 680px;
+		margin: 0 auto;
+		height: 52px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+	nav a {
+		text-decoration: none;
+		color: #555;
+		font-size: 0.875rem;
+	}
+	nav a:hover { color: #111; }
+
+	main {
+		max-width: 680px;
+		margin: 0 auto;
+		padding: 3rem 1.5rem;
+	}
+	h1 {
+		font-size: 1.25rem;
+		font-family: Georgia, serif;
+		margin: 0 0 2rem 0;
+	}
+	.tag-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+	}
+	.tag-item {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 0.85rem 0;
+		border-top: 1px solid #f0f0f0;
+		text-decoration: none;
+		color: inherit;
+	}
+	.tag-list li:last-child .tag-item {
+		border-bottom: 1px solid #f0f0f0;
+	}
+	.tag-item:hover .tag-name { color: #111; }
+	.tag-name {
+		font-size: 0.925rem;
+		color: #555;
+		transition: color 0.15s;
+	}
+	.tag-count {
+		font-size: 0.8rem;
+		color: #bbb;
+	}
+</style>
